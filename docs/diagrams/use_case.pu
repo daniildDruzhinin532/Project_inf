@@ -29,19 +29,19 @@ usecase "Переселиться" as U15
 студент --> U12
 
 
-U2 .> U1 : <<extend>>
-U3 .> U1 : <<extend>>
-U4 .> U1 : <<extend>>
+U1 --> U2
+U1 --> U3
+U1 --> U4
 
-U7 .> U6 : <<extend>>
-U8 .> U6 : <<extend>>
-U9 .> U6 : <<extend>>
+U6 --> U7
+U6 --> U8
+U6 --> U9
 
-U10 .> U9 : <<extend>>
-U11 .> U9 : <<extend>>
+U9 --> U10
+U9 --> U11
 
-U13 .> U12 : <<extend>>
-U14 .> U12 : <<extend>>
-U15 .> U12 : <<extend>>
+U12 --> U13
+U12 --> U14
+U12 --> U15
 
 @enduml
