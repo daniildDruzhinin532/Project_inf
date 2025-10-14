@@ -42,3 +42,5 @@
 | ---------- | -------- | ----------- | --------- |
 | 204| Vasyapupkin13@mail.ru | 1 | 153 |
 
+## Use-case
+![Use-case диаграмма](docs\diagrams\use_case.png)
