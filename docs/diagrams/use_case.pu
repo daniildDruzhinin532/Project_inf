@@ -1,0 +1,47 @@
+@startuml
+left to right direction
+
+actor комендант
+actor студент
+
+usecase "Обработать заявки студентов" as U1
+usecase "Выселить" as U2
+usecase "Заселить" as U3
+usecase "Переселить" as U4
+usecase "Выселение(нарушение правил)" as U5
+
+usecase "Посмотреть информацию об общежитии" as U6
+usecase "Посмотреть список студентов в общяге" as U7
+usecase "Посмотреть уровень заселённости" as U8
+usecase "Посмотреть комнаты" as U9
+usecase "Просмотр свободных комнат" as U10
+usecase "Промотр заполненных комнат" as U11
+
+usecase "Подать заявку" as U12
+usecase "Выселиться" as U13
+usecase "Заселиться" as U14
+usecase "Переселиться" as U15
+
+комендант --> U1
+
+комендант --> U6
+комендант --> U5
+студент --> U12
+
+
+U2 .> U1 : <<extend>>
+U3 .> U1 : <<extend>>
+U4 .> U1 : <<extend>>
+
+U7 .> U6 : <<extend>>
+U8 .> U6 : <<extend>>
+U9 .> U6 : <<extend>>
+
+U10 .> U9 : <<extend>>
+U11 .> U9 : <<extend>>
+
+U13 .> U12 : <<extend>>
+U14 .> U12 : <<extend>>
+U15 .> U12 : <<extend>>
+
+@enduml
