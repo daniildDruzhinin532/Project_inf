@@ -44,3 +44,4 @@
 
 ## Use-case
 ![Use-case диаграмма](docs\diagrams\use_case.png)
+![ERD](docs\diagrams\ERD.png)
