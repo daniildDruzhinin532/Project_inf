@@ -10,7 +10,7 @@ class Repository:
     def close(self):
         self.conn.close()
 
-    # CRUD для Command (комендант)
+    
     def get_all_commands(self):
         self.cursor.execute("SELECT * FROM Command")
         return [Command(*row) for row in self.cursor.fetchall()]
@@ -33,22 +33,22 @@ class Repository:
         self.cursor.execute("DELETE FROM Command WHERE ID = ?", (command_id,))
         self.conn.commit()
 
-    # Авторизация для коменданта
+    
     def authenticate_command(self, surname: str, password: str):
         self.cursor.execute("SELECT * FROM Command WHERE Surname = ? AND password = ?", (surname, password))
         row = self.cursor.fetchone()
         return Command(*row) if row else None
 
-    # CRUD для Student (студент)
+    
     def get_all_students(self):
         self.cursor.execute("SELECT * FROM Student")
         rows = self.cursor.fetchall()
-        # Обрабатываем случай, когда в таблице есть дополнительные поля
+        
         students = []
         for row in rows:
-            if len(row) == 6:  # С учетом поля gender
+            if len(row) == 6:
                 students.append(Student(row[0], row[1], row[2], row[3], row[4], row[5]))
-            else:  # Без поля gender
+            else:
                 students.append(Student(row[0], row[1], row[2], row[3], row[4]))
         return students
 
@@ -56,9 +56,9 @@ class Repository:
         self.cursor.execute("SELECT * FROM Student WHERE ID = ?", (student_id,))
         row = self.cursor.fetchone()
         if row:
-            if len(row) == 6:  # С учетом поля gender
+            if len(row) == 6:
                 return Student(row[0], row[1], row[2], row[3], row[4], row[5])
-            else:  # Без поля gender
+            else:
                 return Student(row[0], row[1], row[2], row[3], row[4])
         return None
 
@@ -75,18 +75,18 @@ class Repository:
         self.cursor.execute("DELETE FROM Student WHERE ID = ?", (student_id,))
         self.conn.commit()
 
-    # Авторизация для студента
+    
     def authenticate_student(self, surname: str, password: str):
         self.cursor.execute("SELECT * FROM Student WHERE Surname = ? AND password = ?", (surname, password))
         row = self.cursor.fetchone()
         if row:
-            if len(row) == 6:  # С учетом поля gender
+            if len(row) == 6:
                 return Student(row[0], row[1], row[2], row[3], row[4], row[5])
-            else:  # Без поля gender
+            else:
                 return Student(row[0], row[1], row[2], row[3], row[4])
         return None
 
-    # CRUD для Request (заявки)
+    
     def get_all_requests(self):
         self.cursor.execute("SELECT * FROM Request")
         return [Request(*row) for row in self.cursor.fetchall()]
@@ -109,7 +109,7 @@ class Repository:
         self.cursor.execute("DELETE FROM Request WHERE ID = ?", (request_id,))
         self.conn.commit()
 
-    # Методы для связанных данных (слой доступа к данным)
+    
     def get_requests_by_student(self, student_id: int):
         """
         Получает все заявки конкретного студента.
@@ -129,9 +129,9 @@ class Repository:
         rows = self.cursor.fetchall()
         students = []
         for row in rows:
-            if len(row) == 6:  # С учетом поля gender
+            if len(row) == 6:
                 students.append(Student(row[0], row[1], row[2], row[3], row[4], row[5]))
-            else:  # Без поля gender
+            else:
                 students.append(Student(row[0], row[1], row[2], row[3], row[4]))
         return students
 
@@ -143,9 +143,9 @@ class Repository:
         rows = self.cursor.fetchall()
         rooms = []
         for row in rows:
-            if len(row) == 6:  # С учетом полей gender и special_group
+            if len(row) == 6:
                 rooms.append(Room(row[0], row[1], row[2], row[3], row[4], row[5]))
-            else:  # Без дополнительных полей
+            else:
                 rooms.append(Room(row[0], row[1], row[2], row[3]))
         return rooms
 
@@ -164,8 +164,14 @@ class Repository:
         rows = self.cursor.fetchall()
         rooms = []
         for row in rows:
-            # Берем только первые 4 поля для Room (игнорируем current_resid и дополнительные поля)
-            rooms.append(Room(row[0], row[1], row[2], row[3]))
+            # Создаем объект Room с учетом всех полей
+            room_id = row[0]
+            num_resid = row[1]
+            num_room = row[2]
+            hostel_id = row[3]
+            gender = row[4] if len(row) > 4 else None
+            special_group = row[5] if len(row) > 5 else None
+            rooms.append(Room(room_id, num_resid, num_room, hostel_id, gender, special_group))
         return rooms
 
     def get_student_room(self, student_id: int):
@@ -179,8 +185,141 @@ class Repository:
         """, (student_id,))
         row = self.cursor.fetchone()
         if row:
-            if len(row) == 6:  # С учетом полей gender и special_group
+            if len(row) == 6:
                 return Room(row[0], row[1], row[2], row[3], row[4], row[5])
-            else:  # Без дополнительных полей
+            else:
                 return Room(row[0], row[1], row[2], row[3])
         return None
+
+    # НОВЫЕ МЕТОДЫ ДЛЯ ОБРАБОТКИ ЗАЯВОК
+    
+    def get_type_request(self, type_request_id: int):
+        """Получает тип заявки по ID"""
+        self.cursor.execute("SELECT * FROM Type_request WHERE ID = ?", (type_request_id,))
+        row = self.cursor.fetchone()
+        return TypeRequest(*row) if row else None
+
+    def get_pending_requests(self):
+        """Получает все необработанные заявки"""
+        self.cursor.execute("SELECT * FROM Request")
+        return [Request(*row) for row in self.cursor.fetchall()]
+
+    def get_free_rooms_by_gender(self, gender: str):
+        """Получает свободные комнаты по полу"""
+        self.cursor.execute("""
+            SELECT r.*, COUNT(sr.ID) as current_resid
+            FROM Room r
+            LEFT JOIN Stud_room sr ON r.ID = sr.Room_ID
+            WHERE r.gender = ?
+            GROUP BY r.ID
+            HAVING current_resid < r.Num_resid
+        """, (gender,))
+        rows = self.cursor.fetchall()
+        rooms = []
+        for row in rows:
+            # Создаем объект Room с учетом всех полей
+            room_id = row[0]
+            num_resid = row[1]
+            num_room = row[2]
+            hostel_id = row[3]
+            room_gender = row[4]
+            special_group = row[5] if len(row) > 5 else None
+            rooms.append(Room(room_id, num_resid, num_room, hostel_id, room_gender, special_group))
+        return rooms
+
+    def settle_student(self, student_id: int, room_id: int):
+        """Заселяет студента в комнату"""
+        # Проверяем, не заселен ли студент уже
+        self.cursor.execute("SELECT * FROM Stud_room WHERE Student_ID = ?", (student_id,))
+        if self.cursor.fetchone():
+            raise Exception("Студент уже заселен в комнату")
+        
+        # Проверяем, есть ли место в комнате
+        self.cursor.execute("""
+            SELECT r.Num_resid, COUNT(sr.ID) as current 
+            FROM Room r 
+            LEFT JOIN Stud_room sr ON r.ID = sr.Room_ID 
+            WHERE r.ID = ? 
+            GROUP BY r.ID
+        """, (room_id,))
+        result = self.cursor.fetchone()
+        if result and result[1] >= result[0]:
+            raise Exception("В комнате нет свободных мест")
+        
+        self.cursor.execute("INSERT INTO Stud_room (Student_ID, Room_ID) VALUES (?, ?)", (student_id, room_id))
+        self.conn.commit()
+
+    def evict_student(self, student_id: int):
+        """Выселяет студента из комнаты"""
+        self.cursor.execute("DELETE FROM Stud_room WHERE Student_ID = ?", (student_id,))
+        self.conn.commit()
+
+    def transfer_student(self, student_id: int, new_room_id: int):
+        """Переселяет студента в другую комнату"""
+        # Сначала выселяем
+        self.evict_student(student_id)
+        # Затем заселяем в новую комнату
+        self.settle_student(student_id, new_room_id)
+
+    def mark_request_processed(self, request_id: int):
+        """Помечает заявку как обработанную (удаляет её)"""
+        self.cursor.execute("DELETE FROM Request WHERE ID = ?", (request_id,))
+        self.conn.commit()
+
+    # НОВЫЕ МЕТОДЫ ДЛЯ РАБОТЫ С ОБЩЕЖИТИЯМИ КОМЕНДАНТОВ
+    
+    def get_hostel_by_command_id(self, command_id: int):
+        """Получает общежитие по ID коменданта"""
+        self.cursor.execute("SELECT * FROM Hostel WHERE Command_ID = ?", (command_id,))
+        row = self.cursor.fetchone()
+        return Hostel(*row) if row else None
+
+    def get_students_in_command_hostel(self, command_id: int):
+        """Получает студентов в общежитии коменданта"""
+        self.cursor.execute("""
+            SELECT s.* FROM Student s
+            JOIN Stud_room sr ON s.ID = sr.Student_ID
+            JOIN Room r ON sr.Room_ID = r.ID
+            JOIN Hostel h ON r.Hostel_ID = h.ID
+            WHERE h.Command_ID = ?
+        """, (command_id,))
+        rows = self.cursor.fetchall()
+        students = []
+        for row in rows:
+            if len(row) == 6:
+                students.append(Student(row[0], row[1], row[2], row[3], row[4], row[5]))
+            else:
+                students.append(Student(row[0], row[1], row[2], row[3], row[4]))
+        return students
+
+    def evict_student_from_command_hostel(self, command_id: int, student_id: int):
+        """Выселяет студента из общежития коменданта"""
+        # Проверяем, что студент находится в общежитии коменданта
+        self.cursor.execute("""
+            SELECT sr.ID FROM Stud_room sr
+            JOIN Room r ON sr.Room_ID = r.ID
+            JOIN Hostel h ON r.Hostel_ID = h.ID
+            WHERE h.Command_ID = ? AND sr.Student_ID = ?
+        """, (command_id, student_id))
+        
+        if not self.cursor.fetchone():
+            raise Exception("Студент не находится в вашем общежитии")
+        
+        self.cursor.execute("DELETE FROM Stud_room WHERE Student_ID = ?", (student_id,))
+        self.conn.commit()
+
+    def get_rooms_in_command_hostel(self, command_id: int):
+        """Получает комнаты в общежитии коменданта"""
+        self.cursor.execute("""
+            SELECT r.* FROM Room r
+            JOIN Hostel h ON r.Hostel_ID = h.ID
+            WHERE h.Command_ID = ?
+        """, (command_id,))
+        rows = self.cursor.fetchall()
+        rooms = []
+        for row in rows:
+            if len(row) == 6:
+                rooms.append(Room(row[0], row[1], row[2], row[3], row[4], row[5]))
+            else:
+                rooms.append(Room(row[0], row[1], row[2], row[3]))
+        return rooms

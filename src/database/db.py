@@ -1,3 +1,5 @@
+# src/database/db.py
+
 import sqlite3
 from sqlite3 import Connection
 
@@ -45,7 +47,6 @@ def create_tables(db_name: str = "hostel.db"):
             Num_room INTEGER NOT NULL,   -- Номер комнаты
             Hostel_ID INTEGER,
             gender TEXT NOT NULL CHECK(gender IN ('male', 'female')),  -- Пол для комнаты
-            special_group TEXT,  -- Специальная группа (например, 'Вера', 'Радиофизик')
             FOREIGN KEY (Hostel_ID) REFERENCES Hostel(ID)
         )
     ''')
@@ -103,7 +104,7 @@ def create_tables(db_name: str = "hostel.db"):
 
 def insert_sample_data(db_name: str = "hostel.db"):
     """
-    Вставляет тестовые записи в таблицы с учетом разделения по полу на уровне комнат.
+    Вставляет тестовые записи в таблицы.
     """
     conn = get_connection(db_name)
     cursor = conn.cursor()
@@ -118,129 +119,116 @@ def insert_sample_data(db_name: str = "hostel.db"):
         cursor.executemany("INSERT INTO Command (Name, Surname, password) VALUES (?, ?, ?)", commands)
         print("Добавлены коменданты.")
 
-    # Проверка и добавление общежитий (теперь смешанные)
+    # Добавление общежитий с привязкой к комендантам
     cursor.execute("SELECT COUNT(*) FROM Hostel")
     if cursor.fetchone()[0] == 0:
         hostels = [
-            (1, 100, 1),  # Общежитие 1 со 100 комнатами
-            (2, 150, 2),  # Общежитие 2 со 150 комнатами
+            (1, 100, 1),  # Общежитие 1 закреплено за комендантом 1
+            (2, 150, 2),  # Общежитие 2 закреплено за комендантом 2
         ]
         cursor.executemany("INSERT INTO Hostel (Num_hostel, count_rooms, Command_ID) VALUES (?, ?, ?)", hostels)
         print("Добавлены общежития.")
 
-    # Проверка и добавление комнат с указанием пола и специальных групп
+    # Добавление комнат (без специальных групп)
     cursor.execute("SELECT COUNT(*) FROM Room")
     if cursor.fetchone()[0] == 0:
-        # Комнаты в общежитии 1 (смешанные по полу)
+        
         hostel1_rooms = [
-            # Мужские комнаты
-            (4, 101, 1, 'male', 'Радиофизик'),    # Комната для радиофизиков
-            (3, 102, 1, 'male', None),
-            (4, 103, 1, 'male', None),
-            # Женские комнаты  
-            (4, 201, 1, 'female', 'Вера'),        # Комната для всех Вер
-            (3, 202, 1, 'female', None),
-            (4, 203, 1, 'female', None),
+            # Мужские комнаты в общежитии 1
+            (4, 101, 1, 'male'),
+            (3, 102, 1, 'male'),
+            (4, 103, 1, 'male'),
+            # Женские комнаты в общежитии 1
+            (4, 201, 1, 'female'),
+            (3, 202, 1, 'female'),
+            (4, 203, 1, 'female'),
         ]
         
-        # Комнаты в общежитии 2 (смешанные по полу)
         hostel2_rooms = [
-            # Мужские комнаты
-            (3, 301, 2, 'male', None),
-            (4, 302, 2, 'male', None),
-            # Женские комнаты
-            (3, 401, 2, 'female', None),
-            (4, 402, 2, 'female', None),
+            # Мужские комнаты в общежитии 2
+            (3, 301, 2, 'male'),
+            (4, 302, 2, 'male'),
+            (3, 303, 2, 'male'),
+            # Женские комнаты в общежитии 2
+            (3, 401, 2, 'female'),
+            (4, 402, 2, 'female'),
+            (3, 403, 2, 'female'),
         ]
         
-        cursor.executemany("INSERT INTO Room (Num_resid, Num_room, Hostel_ID, gender, special_group) VALUES (?, ?, ?, ?, ?)",
+        cursor.executemany("INSERT INTO Room (Num_resid, Num_room, Hostel_ID, gender) VALUES (?, ?, ?, ?)",
                         hostel1_rooms + hostel2_rooms)
         print("Добавлены комнаты.")
 
-    # Проверка и добавление студентов с указанием пола
+    # Добавление студентов (включая новых)
     cursor.execute("SELECT COUNT(*) FROM Student")
     if cursor.fetchone()[0] == 0:
         students = [
-            # Мужчины
-            ("Радиофизик1", "Лентяев", 123456, "studpass1", "male"),
-            ("Витюха", "Битый", 222333, "studpass4", "male"),
-            ("Илюха", "Химик", 333444, "studpass5", "male"),
-            ("Жека", "Покойник", 444555, "studpass6", "male"),
-            ("Батрых", "Редько", 555666, "studpass7", "male"),
-            ("Павел", "Башмачников", 666777, "studpass8", "male"),
-            ("Жорка", "Змей", 777888, "studpass9", "male"),
-            ("Радиофизик2", "Пузанов", 888999, "studpass10", "male"),
-            ("Вова", "Винт", 999000, "studpass11", "male"),
-            ("Дима", "Космос", 100101, "studpass12", "male"),
-            ("Артем", "Исаев", 101102, "studpass13", "male"),
-            ("Радиофизик3", "Дотеров", 103104, "studpass15", "male"),
-            ("Константин", "Изфильма", 105106, "studpass17", "male"),
+            # Существующие студенты (мужчины)
+            ("Алексей", "Иванов", 123456, "studpass1", "male"),
+            ("Дмитрий", "Петров", 222333, "studpass4", "male"),
+            ("Илья", "Сидоров", 333444, "studpass5", "male"),
+            ("Евгений", "Козлов", 444555, "studpass6", "male"),
+            ("Андрей", "Новиков", 555666, "studpass7", "male"),
+            ("Павел", "Морозов", 666777, "studpass8", "male"),
+            ("Георгий", "Зайцев", 777888, "studpass9", "male"),
+            ("Сергей", "Павлов", 888999, "studpass10", "male"),
+            ("Владимир", "Семенов", 999000, "studpass11", "male"),
+            ("Артем", "Голубев", 100101, "studpass12", "male"),
+            ("Максим", "Виноградов", 101102, "studpass13", "male"),
+            ("Кирилл", "Белов", 103104, "studpass15", "male"),
+            ("Константин", "Медведев", 105106, "studpass17", "male"),
             
-            # Женщины
-            ("Вера", "Староверовна", 654321, "studpass2", "female"),
-            ("Вера", "Вперуновна", 111222, "studpass3", "female"),
-            ("Светлана", "Попова", 102103, "studpass14", "female"),
-            ("Юлия", "Лазарева", 104105, "studpass16", "female"),
-            ("Наталья", "Андреева", 106107, "studpass18", "female"),
-            ("Вера", "Ведовна", 107108, "studpass19", "female"),
-            ("Вера", "Вбоговна", 108109, "studpass20", "female"),
+            # Существующие студенты (женщины)
+            ("Анна", "Смирнова", 654321, "studpass2", "female"),
+            ("Елена", "Кузнецова", 111222, "studpass3", "female"),
+            ("Ольга", "Попова", 102103, "studpass14", "female"),
+            ("Юлия", "Васильева", 104105, "studpass16", "female"),
+            ("Наталья", "Романова", 106107, "studpass18", "female"),
+            ("Ирина", "Зайцева", 107108, "studpass19", "female"),
+            ("Мария", "Соколова", 108109, "studpass20", "female"),
+            
+            # Новые студенты, которые хотят заселиться (10 человек)
+            ("Александр", "Орлов", 200001, "pass2001", "male"),
+            ("Никита", "Лебедев", 200002, "pass2002", "male"),
+            ("Роман", "Егоров", 200003, "pass2003", "male"),
+            ("Станислав", "Комаров", 200004, "pass2004", "male"),
+            ("Вадим", "Щербаков", 200005, "pass2005", "male"),
+            ("Татьяна", "Максимова", 200006, "pass2006", "female"),
+            ("Екатерина", "Фомина", 200007, "pass2007", "female"),
+            ("Светлана", "Давыдова", 200008, "pass2008", "female"),
+            ("Людмила", "Беляева", 200009, "pass2009", "female"),
+            ("Галина", "Гаврилова", 200010, "pass2010", "female"),
+            
+            # Студенты, которые просто в базе (3 человека)
+            ("Виктор", "Титов", 300001, "pass3001", "male"),
+            ("Аркадий", "Субботин", 300002, "pass3002", "male"),
+            ("Лариса", "Федотова", 300003, "pass3003", "female"),
         ]
         cursor.executemany("INSERT INTO Student (Name, Surname, student_ticket, password, gender) VALUES (?, ?, ?, ?, ?)", students)
         print("Добавлены студенты.")
 
-    # Автоматическое расселение студентов по правилам
+    # Расселение студентов по комнатам (случайное распределение)
     cursor.execute("SELECT COUNT(*) FROM Stud_room")
     if cursor.fetchone()[0] == 0:
         
-        # Функция для расселения студентов в комнату
         def settle_students(room_id, student_ids):
             for student_id in student_ids:
                 try:
                     cursor.execute("INSERT INTO Stud_room (Student_ID, Room_ID) VALUES (?, ?)", (student_id, room_id))
                 except sqlite3.IntegrityError:
-                    pass  # Уже расселен
+                    pass
         
-        # 1. Расселяем радиофизиков в их специальную комнату
-        cursor.execute('''
-            SELECT ID FROM Room WHERE special_group = 'Радиофизик' AND gender = 'male'
-        ''')
-        radio_room_result = cursor.fetchone()
-        if radio_room_result:
-            radio_room_id = radio_room_result[0]
-            cursor.execute("SELECT ID FROM Student WHERE Surname LIKE 'Радиофизик%' AND gender = 'male'")
-            radio_students = [row[0] for row in cursor.fetchall()]
-            if radio_students:
-                settle_students(radio_room_id, radio_students)
-                print(f"Расселены радиофизики в комнату {radio_room_id}")
+        # Получаем всех студентов, которые должны быть заселены (первые 20)
+        cursor.execute("SELECT ID, gender FROM Student WHERE ID <= 20")
+        students_to_settle = cursor.fetchall()
         
-        # 2. Расселяем студентов с именем Вера в их специальную комнату
-        cursor.execute('''
-            SELECT ID FROM Room WHERE special_group = 'Вера' AND gender = 'female'
-        ''')
-        vera_room_result = cursor.fetchone()
-        if vera_room_result:
-            vera_room_id = vera_room_result[0]
-            cursor.execute("SELECT ID FROM Student WHERE Name = 'Вера' AND gender = 'female'")
-            vera_students = [row[0] for row in cursor.fetchall()]
-            if vera_students:
-                settle_students(vera_room_id, vera_students)
-                print(f"Расселены студентки с именем Вера в комнату {vera_room_id}")
-        
-        # 3. Расселяем остальных студентов в обычные комнаты с учетом пола
-        cursor.execute("SELECT ID FROM Student WHERE ID NOT IN (SELECT Student_ID FROM Stud_room)")
-        remaining_students = [row[0] for row in cursor.fetchall()]
-        
-        for student_id in remaining_students:
-            # Определяем пол студента
-            cursor.execute("SELECT gender FROM Student WHERE ID = ?", (student_id,))
-            gender = cursor.fetchone()[0]
-            
-            # Находим подходящую комнату (того же пола, не переполненную, без специальной группы)
+        # Расселяем студентов по комнатам соответствующего пола
+        for student_id, gender in students_to_settle:
             cursor.execute('''
                 SELECT r.ID 
                 FROM Room r 
                 LEFT JOIN Stud_room sr ON r.ID = sr.Room_ID 
-                WHERE r.gender = ? AND r.special_group IS NULL
+                WHERE r.gender = ?
                 GROUP BY r.ID 
                 HAVING COUNT(sr.Student_ID) < r.Num_resid
                 LIMIT 1
@@ -253,25 +241,45 @@ def insert_sample_data(db_name: str = "hostel.db"):
         
         print("Расселение завершено.")
 
-    # Проверка и добавление типов заявок
+    # Добавление типов заявок
     cursor.execute("SELECT COUNT(*) FROM Type_request")
     if cursor.fetchone()[0] == 0:
         type_requests = [
             ("Заселение", "Заявка на заселение в комнату"),
             ("Выселение", "Заявка на выселение"),
             ("Переселение", "Заявка на переселение"),
-            ("Выселение за нарушение", "Административное выселение"),
         ]
         cursor.executemany("INSERT INTO Type_request (name, comment) VALUES (?, ?)", type_requests)
         print("Добавлены типы заявок.")
 
-    # Проверка и добавление заявок
+    # Добавление заявок
     cursor.execute("SELECT COUNT(*) FROM Request")
     if cursor.fetchone()[0] == 0:
         requests = [
-            (1, "Заселение в общагу 1", "2025-11-01", 1, "Прошу заселить в комнату для радиофизиков"),
-            (2, "Выселение", "2025-11-05", 2, "Прошу выселить"),
-            (3, "Переселение", "2025-11-10", 3, "Прошу переселить в другую комнату"),
+            # Заявки на заселение от новых студентов (10 человек)
+            (1, "Заселение в общежитие", "2025-01-15", 21, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-16", 22, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-17", 23, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-18", 24, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-19", 25, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-20", 26, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-21", 27, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-22", 28, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-23", 29, "Прошу заселить в общежитие"),
+            (1, "Заселение в общежитие", "2025-01-24", 30, "Прошу заселить в общежитие"),
+            
+            # Заявки на выселение (5 человек)
+            (2, "Выселение из общежития", "2025-01-25", 1, "Хочу выселиться из общежития"),
+            (2, "Выселение из общежития", "2025-01-26", 2, "Хочу выселиться из общежития"),
+            (2, "Выселение из общежития", "2025-01-27", 3, "Хочу выселиться из общежития"),
+            (2, "Выселение из общежития", "2025-01-28", 4, "Хочу выселиться из общежития"),
+            (2, "Выселение из общежития", "2025-01-29", 5, "Хочу выселиться из общежития"),
+            
+            # Заявки на переселение (3 человека)
+            (3, "Переселение в другую комнату", "2025-01-30", 6, "Прошу переселить в другую комнату"),
+            (3, "Переселение в другую комнату", "2025-01-31", 7, "Прошу переселить в другую комнату"),
+            (3, "Переселение в другую комнату", "2025-02-01", 8, "Прошу переселить в другую комнату"),
+            
         ]
         cursor.executemany("INSERT INTO Request (Type_request_ID, name, date, student_id, text) VALUES (?, ?, ?, ?, ?)", requests)
         print("Добавлены заявки.")
@@ -289,13 +297,11 @@ def check_settlement(db_name: str = "hostel.db"):
     
     print("\n=== ПРОВЕРКА РАССЕЛЕНИЯ ===")
     
-    # Проверяем комнаты с студентами
     cursor.execute('''
         SELECT 
             h.Num_hostel as Общежитие,
             r.Num_room as Комната,
             r.gender as Пол_комнаты,
-            r.special_group as Группа,
             COUNT(sr.Student_ID) as Заселено,
             r.Num_resid as Всего_мест,
             GROUP_CONCAT(s.Name || ' ' || s.Surname) as Студенты
@@ -309,11 +315,10 @@ def check_settlement(db_name: str = "hostel.db"):
     
     rooms = cursor.fetchall()
     for room in rooms:
-        print(f"Общежитие {room[0]}, Комната {room[1]}: {room[2]} ({room[3] or 'обычная'}) - {room[4]}/{room[5]} мест")
-        if room[6]:
-            print(f"  Студенты: {room[6]}")
+        print(f"Общежитие {room[0]}, Комната {room[1]}: {room[2]} - {room[3]}/{room[4]} мест")
+        if room[5]:
+            print(f"  Студенты: {room[5]}")
     
-    # Проверяем разделение по полу
     cursor.execute('''
         SELECT 
             r.gender as Пол_комнаты,
