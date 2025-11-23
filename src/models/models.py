@@ -22,8 +22,6 @@ class Room:
     num_resid: int
     num_room: int
     hostel_id: int
-    gender: str = None
-    special_group: str = None
 
 @dataclass
 class StudRoom:
@@ -38,8 +36,7 @@ class Student:
     surname: str
     student_ticket: int
     password: str
-    gender: str = None
-
+    
 @dataclass
 class TypeRequest:
     id: int

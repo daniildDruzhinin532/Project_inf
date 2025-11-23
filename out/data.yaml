@@ -1,198 +1,165 @@
 - ID: 1
   Name: Алексей
   Surname: Иванов
-  gender: male
   password: studpass1
   student_ticket: 123456
 - ID: 2
   Name: Дмитрий
   Surname: Петров
-  gender: male
   password: studpass4
   student_ticket: 222333
 - ID: 3
   Name: Илья
   Surname: Сидоров
-  gender: male
   password: studpass5
   student_ticket: 333444
 - ID: 4
   Name: Евгений
   Surname: Козлов
-  gender: male
   password: studpass6
   student_ticket: 444555
 - ID: 5
   Name: Андрей
   Surname: Новиков
-  gender: male
   password: studpass7
   student_ticket: 555666
 - ID: 6
   Name: Павел
   Surname: Морозов
-  gender: male
   password: studpass8
   student_ticket: 666777
 - ID: 7
   Name: Георгий
   Surname: Зайцев
-  gender: male
   password: studpass9
   student_ticket: 777888
 - ID: 8
   Name: Сергей
   Surname: Павлов
-  gender: male
   password: studpass10
   student_ticket: 888999
 - ID: 9
   Name: Владимир
   Surname: Семенов
-  gender: male
   password: studpass11
   student_ticket: 999000
 - ID: 10
   Name: Артем
   Surname: Голубев
-  gender: male
   password: studpass12
   student_ticket: 100101
 - ID: 11
   Name: Максим
   Surname: Виноградов
-  gender: male
   password: studpass13
   student_ticket: 101102
 - ID: 12
   Name: Кирилл
   Surname: Белов
-  gender: male
   password: studpass15
   student_ticket: 103104
 - ID: 13
   Name: Константин
   Surname: Медведев
-  gender: male
   password: studpass17
   student_ticket: 105106
 - ID: 14
   Name: Анна
   Surname: Смирнова
-  gender: female
   password: studpass2
   student_ticket: 654321
 - ID: 15
   Name: Елена
   Surname: Кузнецова
-  gender: female
   password: studpass3
   student_ticket: 111222
 - ID: 16
   Name: Ольга
   Surname: Попова
-  gender: female
   password: studpass14
   student_ticket: 102103
 - ID: 17
   Name: Юлия
   Surname: Васильева
-  gender: female
   password: studpass16
   student_ticket: 104105
 - ID: 18
   Name: Наталья
   Surname: Романова
-  gender: female
   password: studpass18
   student_ticket: 106107
 - ID: 19
   Name: Ирина
   Surname: Зайцева
-  gender: female
   password: studpass19
   student_ticket: 107108
 - ID: 20
   Name: Мария
   Surname: Соколова
-  gender: female
   password: studpass20
   student_ticket: 108109
 - ID: 21
   Name: Александр
   Surname: Орлов
-  gender: male
   password: pass2001
   student_ticket: 200001
 - ID: 22
   Name: Никита
   Surname: Лебедев
-  gender: male
   password: pass2002
   student_ticket: 200002
 - ID: 23
   Name: Роман
   Surname: Егоров
-  gender: male
   password: pass2003
   student_ticket: 200003
 - ID: 24
   Name: Станислав
   Surname: Комаров
-  gender: male
   password: pass2004
   student_ticket: 200004
 - ID: 25
   Name: Вадим
   Surname: Щербаков
-  gender: male
   password: pass2005
   student_ticket: 200005
 - ID: 26
   Name: Татьяна
   Surname: Максимова
-  gender: female
   password: pass2006
   student_ticket: 200006
 - ID: 27
   Name: Екатерина
   Surname: Фомина
-  gender: female
   password: pass2007
   student_ticket: 200007
 - ID: 28
   Name: Светлана
   Surname: Давыдова
-  gender: female
   password: pass2008
   student_ticket: 200008
 - ID: 29
   Name: Людмила
   Surname: Беляева
-  gender: female
   password: pass2009
   student_ticket: 200009
 - ID: 30
   Name: Галина
   Surname: Гаврилова
-  gender: female
   password: pass2010
   student_ticket: 200010
 - ID: 31
   Name: Виктор
   Surname: Титов
-  gender: male
   password: pass3001
   student_ticket: 300001
 - ID: 32
   Name: Аркадий
   Surname: Субботин
-  gender: male
   password: pass3002
   student_ticket: 300002
 - ID: 33
   Name: Лариса
   Surname: Федотова
-  gender: female
   password: pass3003
   student_ticket: 300003

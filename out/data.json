@@ -4,263 +4,230 @@
     "Name": "Алексей",
     "Surname": "Иванов",
     "student_ticket": 123456,
-    "password": "studpass1",
-    "gender": "male"
+    "password": "studpass1"
   },
   {
     "ID": 2,
     "Name": "Дмитрий",
     "Surname": "Петров",
     "student_ticket": 222333,
-    "password": "studpass4",
-    "gender": "male"
+    "password": "studpass4"
   },
   {
     "ID": 3,
     "Name": "Илья",
     "Surname": "Сидоров",
     "student_ticket": 333444,
-    "password": "studpass5",
-    "gender": "male"
+    "password": "studpass5"
   },
   {
     "ID": 4,
     "Name": "Евгений",
     "Surname": "Козлов",
     "student_ticket": 444555,
-    "password": "studpass6",
-    "gender": "male"
+    "password": "studpass6"
   },
   {
     "ID": 5,
     "Name": "Андрей",
     "Surname": "Новиков",
     "student_ticket": 555666,
-    "password": "studpass7",
-    "gender": "male"
+    "password": "studpass7"
   },
   {
     "ID": 6,
     "Name": "Павел",
     "Surname": "Морозов",
     "student_ticket": 666777,
-    "password": "studpass8",
-    "gender": "male"
+    "password": "studpass8"
   },
   {
     "ID": 7,
     "Name": "Георгий",
     "Surname": "Зайцев",
     "student_ticket": 777888,
-    "password": "studpass9",
-    "gender": "male"
+    "password": "studpass9"
   },
   {
     "ID": 8,
     "Name": "Сергей",
     "Surname": "Павлов",
     "student_ticket": 888999,
-    "password": "studpass10",
-    "gender": "male"
+    "password": "studpass10"
   },
   {
     "ID": 9,
     "Name": "Владимир",
     "Surname": "Семенов",
     "student_ticket": 999000,
-    "password": "studpass11",
-    "gender": "male"
+    "password": "studpass11"
   },
   {
     "ID": 10,
     "Name": "Артем",
     "Surname": "Голубев",
     "student_ticket": 100101,
-    "password": "studpass12",
-    "gender": "male"
+    "password": "studpass12"
   },
   {
     "ID": 11,
     "Name": "Максим",
     "Surname": "Виноградов",
     "student_ticket": 101102,
-    "password": "studpass13",
-    "gender": "male"
+    "password": "studpass13"
   },
   {
     "ID": 12,
     "Name": "Кирилл",
     "Surname": "Белов",
     "student_ticket": 103104,
-    "password": "studpass15",
-    "gender": "male"
+    "password": "studpass15"
   },
   {
     "ID": 13,
     "Name": "Константин",
     "Surname": "Медведев",
     "student_ticket": 105106,
-    "password": "studpass17",
-    "gender": "male"
+    "password": "studpass17"
   },
   {
     "ID": 14,
     "Name": "Анна",
     "Surname": "Смирнова",
     "student_ticket": 654321,
-    "password": "studpass2",
-    "gender": "female"
+    "password": "studpass2"
   },
   {
     "ID": 15,
     "Name": "Елена",
     "Surname": "Кузнецова",
     "student_ticket": 111222,
-    "password": "studpass3",
-    "gender": "female"
+    "password": "studpass3"
   },
   {
     "ID": 16,
     "Name": "Ольга",
     "Surname": "Попова",
     "student_ticket": 102103,
-    "password": "studpass14",
-    "gender": "female"
+    "password": "studpass14"
   },
   {
     "ID": 17,
     "Name": "Юлия",
     "Surname": "Васильева",
     "student_ticket": 104105,
-    "password": "studpass16",
-    "gender": "female"
+    "password": "studpass16"
   },
   {
     "ID": 18,
     "Name": "Наталья",
     "Surname": "Романова",
     "student_ticket": 106107,
-    "password": "studpass18",
-    "gender": "female"
+    "password": "studpass18"
   },
   {
     "ID": 19,
     "Name": "Ирина",
     "Surname": "Зайцева",
     "student_ticket": 107108,
-    "password": "studpass19",
-    "gender": "female"
+    "password": "studpass19"
   },
   {
     "ID": 20,
     "Name": "Мария",
     "Surname": "Соколова",
     "student_ticket": 108109,
-    "password": "studpass20",
-    "gender": "female"
+    "password": "studpass20"
   },
   {
     "ID": 21,
     "Name": "Александр",
     "Surname": "Орлов",
     "student_ticket": 200001,
-    "password": "pass2001",
-    "gender": "male"
+    "password": "pass2001"
   },
   {
     "ID": 22,
     "Name": "Никита",
     "Surname": "Лебедев",
     "student_ticket": 200002,
-    "password": "pass2002",
-    "gender": "male"
+    "password": "pass2002"
   },
   {
     "ID": 23,
     "Name": "Роман",
     "Surname": "Егоров",
     "student_ticket": 200003,
-    "password": "pass2003",
-    "gender": "male"
+    "password": "pass2003"
   },
   {
     "ID": 24,
     "Name": "Станислав",
     "Surname": "Комаров",
     "student_ticket": 200004,
-    "password": "pass2004",
-    "gender": "male"
+    "password": "pass2004"
   },
   {
     "ID": 25,
     "Name": "Вадим",
     "Surname": "Щербаков",
     "student_ticket": 200005,
-    "password": "pass2005",
-    "gender": "male"
+    "password": "pass2005"
   },
   {
     "ID": 26,
     "Name": "Татьяна",
     "Surname": "Максимова",
     "student_ticket": 200006,
-    "password": "pass2006",
-    "gender": "female"
+    "password": "pass2006"
   },
   {
     "ID": 27,
     "Name": "Екатерина",
     "Surname": "Фомина",
     "student_ticket": 200007,
-    "password": "pass2007",
-    "gender": "female"
+    "password": "pass2007"
   },
   {
     "ID": 28,
     "Name": "Светлана",
     "Surname": "Давыдова",
     "student_ticket": 200008,
-    "password": "pass2008",
-    "gender": "female"
+    "password": "pass2008"
   },
   {
     "ID": 29,
     "Name": "Людмила",
     "Surname": "Беляева",
     "student_ticket": 200009,
-    "password": "pass2009",
-    "gender": "female"
+    "password": "pass2009"
   },
   {
     "ID": 30,
     "Name": "Галина",
     "Surname": "Гаврилова",
     "student_ticket": 200010,
-    "password": "pass2010",
-    "gender": "female"
+    "password": "pass2010"
   },
   {
     "ID": 31,
     "Name": "Виктор",
     "Surname": "Титов",
     "student_ticket": 300001,
-    "password": "pass3001",
-    "gender": "male"
+    "password": "pass3001"
   },
   {
     "ID": 32,
     "Name": "Аркадий",
     "Surname": "Субботин",
     "student_ticket": 300002,
-    "password": "pass3002",
-    "gender": "male"
+    "password": "pass3002"
   },
   {
     "ID": 33,
     "Name": "Лариса",
     "Surname": "Федотова",
     "student_ticket": 300003,
-    "password": "pass3003",
-    "gender": "female"
+    "password": "pass3003"
   }
 ]

@@ -1,4 +1,3 @@
-# src/exporter/student_exporter.py
 
 import json
 import csv
@@ -23,18 +22,18 @@ class StudentExporter:
         conn = get_connection(self.db_name)
         cursor = conn.cursor()
         
-        # Получаем информацию о столбцах таблицы Student
+        
         cursor.execute("PRAGMA table_info(Student)")
         columns_info = cursor.fetchall()
         column_names = [col[1] for col in columns_info]
         
-        # Получаем все данные студентов
+        
         cursor.execute("SELECT * FROM Student")
         students = cursor.fetchall()
         
         conn.close()
         
-        # Преобразуем в список словарей
+        
         students_data = []
         for student in students:
             student_dict = {}
@@ -56,13 +55,13 @@ class StudentExporter:
         file_path = self.output_dir / "data.csv"
         
         if not students_data:
-            # Создаем пустой файл с заголовками
+        
             with open(file_path, 'w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow([])
             return
         
-        # Используем ключи первого словаря как заголовки
+        
         fieldnames = students_data[0].keys()
         
         with open(file_path, 'w', newline='', encoding='utf-8') as f:
@@ -73,7 +72,7 @@ class StudentExporter:
         print(f"Данные экспортированы в {file_path}")
     
     def export_to_xml(self, students_data):
-        """Экспортирует данные в XML с правильным форматированием"""
+        """Экспортирует данные в XML"""
         file_path = self.output_dir / "data.xml"
         
         root = ET.Element("students")
@@ -84,12 +83,12 @@ class StudentExporter:
                 field_elem = ET.SubElement(student_elem, key)
                 field_elem.text = str(value)
         
-        # Преобразуем в строку с форматированием
+        
         xml_str = ET.tostring(root, encoding='utf-8')
         parsed_xml = minidom.parseString(xml_str)
         pretty_xml = parsed_xml.toprettyxml(indent="  ", encoding='utf-8')
         
-        # Убираем лишние пустые строки которые добавляет minidom
+        
         pretty_xml_str = pretty_xml.decode('utf-8')
         pretty_xml_str = '\n'.join([line for line in pretty_xml_str.split('\n') if line.strip()])
         
@@ -128,4 +127,4 @@ class StudentExporter:
             
         except Exception as e:
             print(f"Ошибка при экспорте данных: {e}")
-            raise  # Пробрасываем исключение дальше для отладки
+            raise

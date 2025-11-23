@@ -2,7 +2,7 @@
 
 from src.database.db import create_tables, insert_sample_data
 from src.repository.repository import Repository
-from src.exporter.student_exporter import StudentExporter  # Добавлен новый импорт
+from src.exporter.student_exporter import StudentExporter
 import os
 
 DB_FILE = "hostel.db"
@@ -17,7 +17,7 @@ def command_menu(repo, command_id):
         print("4 - Показать всех студентов")
         print("5 - Обработать заявки")
         print("6 - Управление студентами в моём общежитии")
-        print("7 - Экспорт данных студентов")  # Новая опция экспорта
+        print("7 - Экспорт данных студентов")
         print("0 - Выход")
         choice = input("Ваш выбор: ")
 
@@ -44,7 +44,7 @@ def command_menu(repo, command_id):
             print("\nСвободные комнаты:")
             if rooms:
                 for room in rooms:
-                    print(f"{room.id}: Номер {room.num_room}, Мест: {room.num_resid}, Общежитие: {room.hostel_id}, Пол: {room.gender}")
+                    print(f"{room.id}: Номер {room.num_room}, Мест: {room.num_resid}, Общежитие: {room.hostel_id}")
             else:
                 print("Нет свободных комнат.")
 
@@ -52,7 +52,7 @@ def command_menu(repo, command_id):
             students = repo.get_all_students()
             print("\nСписок всех студентов:")
             for stud in students:
-                print(f"{stud.id}: {stud.name} {stud.surname} (Билет: {stud.student_ticket}, Пол: {stud.gender})")
+                print(f"{stud.id}: {stud.name} {stud.surname} (Билет: {stud.student_ticket})")
 
         elif choice == "5":
             process_requests_menu(repo, command_id)
@@ -60,7 +60,7 @@ def command_menu(repo, command_id):
         elif choice == "6":
             manage_students_menu(repo, command_id)
 
-        elif choice == "7":  # Новая опция экспорта данных
+        elif choice == "7":
             export_data_menu()
 
         elif choice == "0":
@@ -106,7 +106,7 @@ def manage_students_menu(repo, command_id):
             if rooms:
                 for room in rooms:
                     students_count = len(repo.get_students_in_room(room.id))
-                    print(f"{room.id}: Комната {room.num_room}, Пол: {room.gender}, Мест: {students_count}/{room.num_resid}")
+                    print(f"{room.id}: Комната {room.num_room}, Мест: {students_count}/{room.num_resid}")
             else:
                 print("В вашем общежитии нет комнат.")
 
@@ -172,62 +172,59 @@ def process_requests_menu(repo, command_id):
         else:
             print("Неверный выбор. Попробуйте снова.")
 
-def process_approval(repo, request, student, type_request):
-    """Обработка одобрения заявки"""
-    explanation = input("Введите пояснение для письма (или оставьте пустым): ")
-    
-    try:
-        if request.type_request_id == 1:  # Заселение
-            # Находим подходящую комнату
-            free_rooms = repo.get_free_rooms_by_gender(student.gender)
-            if not free_rooms:
-                print("Нет свободных комнат подходящего пола!")
-                return
-                
-            print("\nДоступные комнаты:")
-            for room in free_rooms:
-                print(f"{room.id}: Комната {room.num_room}, Общежитие {room.hostel_id}, Мест: {room.num_resid}")
-            
-            room_id = int(input("Введите ID комнаты для заселения: "))
-            repo.settle_student(student.id, room_id)
-            print(f"Студент {student.name} {student.surname} заселен в комнату {room_id}")
-            
-        elif request.type_request_id == 2:  # Выселение
-            current_room = repo.get_student_room(student.id)
-            if current_room:
-                repo.evict_student(student.id)
-                print(f"Студент {student.name} {student.surname} выселен из комнаты {current_room.id}")
-            else:
-                print("Студент не проживает в общежитии")
-                
-        elif request.type_request_id == 3:  # Переселение
-            current_room = repo.get_student_room(student.id)
-            if not current_room:
-                print("Студент не проживает в общежитии")
-                return
-                
-            free_rooms = repo.get_free_rooms_by_gender(student.gender)
-            print("\nДоступные комнаты для переселения:")
-            for room in free_rooms:
-                print(f"{room.id}: Комната {room.num_room}, Общежитие {room.hostel_id}, Мест: {room.num_resid}")
-            
-            new_room_id = int(input("Введите ID новой комнаты: "))
-            repo.transfer_student(student.id, new_room_id)
-            print(f"Студент {student.name} {student.surname} переселен из комнаты {current_room.id} в комнату {new_room_id}")
+    def process_approval(repo, request, student, type_request):
+        """Обработка одобрения заявки"""
+        explanation = input("Введите пояснение для письма (или оставьте пустым): ")
         
-        # Отправляем письмо об одобрении
-        send_approval_email(student, request, explanation)
-        repo.mark_request_processed(request.id)
-        print("Заявка одобрена и письмо отправлено!")
-        
-    except Exception as e:
-        print(f"Ошибка при обработке заявки: {e}")
+        try:
+            if request.type_request_id == 1: 
+                free_rooms = repo.get_free_rooms()  # Заменили get_free_rooms_by_gender на get_free_rooms
+                if not free_rooms:
+                    print("Нет свободных комнат!")
+                    return
+                    
+                print("\nДоступные комнаты:")
+                for room in free_rooms:
+                    print(f"{room.id}: Комната {room.num_room}, Общежитие {room.hostel_id}, Мест: {room.num_resid}")
+                
+                room_id = int(input("Введите ID комнаты для заселения: "))
+                repo.settle_student(student.id, room_id)
+                print(f"Студент {student.name} {student.surname} заселен в комнату {room_id}")
+                
+            elif request.type_request_id == 2:
+                current_room = repo.get_student_room(student.id)
+                if current_room:
+                    repo.evict_student(student.id)
+                    print(f"Студент {student.name} {student.surname} выселен из комнаты {current_room.id}")
+                else:
+                    print("Студент не проживает в общежитии")
+                    
+            elif request.type_request_id == 3:
+                current_room = repo.get_student_room(student.id)
+                if not current_room:
+                    print("Студент не проживает в общежитии")
+                    return
+                    
+                free_rooms = repo.get_free_rooms()  # Заменили get_free_rooms_by_gender на get_free_rooms
+                print("\nДоступные комнаты для переселения:")
+                for room in free_rooms:
+                    print(f"{room.id}: Комната {room.num_room}, Общежитие {room.hostel_id}, Мест: {room.num_resid}")
+                
+                new_room_id = int(input("Введите ID новой комнаты: "))
+                repo.transfer_student(student.id, new_room_id)
+                print(f"Студент {student.name} {student.surname} переселен из комнаты {current_room.id} в комнату {new_room_id}")
+            
+            send_approval_email(student, request, explanation)
+            repo.mark_request_processed(request.id)
+            print("Заявка одобрена и письмо отправлено!")
+            
+        except Exception as e:
+            print(f"Ошибка при обработке заявки: {e}")
 
 def process_rejection(repo, request, student):
     """Обработка отклонения заявки"""
     explanation = input("Введите причину отклонения: ")
     
-    # Отправляем письмо об отклонении
     send_rejection_email(student, request, explanation)
     repo.mark_request_processed(request.id)
     print("Заявка отклонена и письмо отправлено!")
