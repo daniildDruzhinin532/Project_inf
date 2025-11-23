@@ -244,7 +244,6 @@ class Repository:
         return students
 
     def evict_student_from_command_hostel(self, command_id: int, student_id: int):
-        """Выселяет студента из общежития коменданта"""
         self.cursor.execute("""
             SELECT sr.ID FROM Stud_room sr
             JOIN Room r ON sr.Room_ID = r.ID
@@ -259,7 +258,6 @@ class Repository:
         self.conn.commit()
 
     def get_rooms_in_command_hostel(self, command_id: int):
-        """Получает комнаты в общежитии коменданта"""
         self.cursor.execute("""
             SELECT r.* FROM Room r
             JOIN Hostel h ON r.Hostel_ID = h.ID
