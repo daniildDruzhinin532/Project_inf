@@ -43,6 +43,6 @@
 | 204| Vasyapupkin13@mail.ru | 1 | 153 |
 
 ## Use-case
-![Use-case диаграмма](docs\diagrams\use_case.png)
+![Use-case диаграмма](docs\diagrams\PlantUml.png)
 ## ERD
 ![ERD](docs\diagrams\ERD.png)

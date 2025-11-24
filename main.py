@@ -300,8 +300,11 @@ def student_menu(repo, student_id):
 
         if choice == "1":
             type_request_id = int(input("Введите ID типа заявки (1 - Заселение, 2 - Выселение, 3 - Переселение): "))
-            
-            if type_request_id == 1:
+            if type_request_id not in [1, 2, 3]:
+                print("Введите число от 1 до 3!")
+                continue
+
+            elif type_request_id == 1:
                 free_rooms = repo.get_free_rooms()
                 if not free_rooms:
                     print("❌ В настоящее время нет свободных комнат для заселения.")
