@@ -104,7 +104,6 @@ def insert_sample_data(db_name: str = "hostel.db"):
     if cursor.fetchone()[0] == 0:
         commands = [
             ("Иван", "Иванов", "pass123"),
-            ("Мария", "Петрова", "pass456"),
         ]
         cursor.executemany("INSERT INTO Command (Name, Surname, password) VALUES (?, ?, ?)", commands)
         print("Добавлены коменданты.")
