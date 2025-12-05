@@ -46,15 +46,31 @@ def command_menu(repo, command_id):
 def process_requests_menu(repo, command_id):
     """Меню обработки заявок"""
     while True:
-        print("\nОбработка заявки:")
+        # Проверяем есть ли заявки вообще
+        all_requests = repo.get_all_requests()
+        pending_requests = repo.get_pending_requests()
+        
+        has_any_requests = len(all_requests) > 0
+        has_pending_requests = len(pending_requests) > 0
+        
+        print("\nОбработка заявок:")
         print("1 - Показать все заявки студентов")
         print("2 - Показать необработанные заявки")
-        print("3 - Обработать конкретную заявку")
+        
+        if has_pending_requests:
+            print("3 - Обработать конкретную заявку")
+        else:
+            print("3 - Обработать конкретную заявку ❌ (нет необработанных заявок)")
+        
         print("0 - Назад")
         choice = input("Ваш выбор: ")
 
         if choice == "1":
-            requests = repo.get_all_requests()
+            if not has_any_requests:
+                print("❌ Нет заявок для отображения.")
+                continue
+                
+            requests = all_requests
             print("\nСписок всех заявок:")
             for req in requests:
                 student = repo.get_student(req.student_id)
@@ -62,21 +78,43 @@ def process_requests_menu(repo, command_id):
                 print(f"{req.id}: {req.name} (Тип: {type_request.name}, Дата: {req.date}, Студент: {student.name} {student.surname}, Текст: {req.text})")
 
         elif choice == "2":
-            requests = repo.get_pending_requests()
+            if not has_pending_requests:
+                print("❌ Нет необработанных заявок.")
+                continue
+                
+            requests = pending_requests
             print("\nНеобработанные заявки:")
-            if requests:
-                for req in requests:
-                    student = repo.get_student(req.student_id)
-                    type_request = repo.get_type_request(req.type_request_id)
-                    print(f"{req.id}: {type_request.name} - {req.name} (Студент: {student.name} {student.surname}, Дата: {req.date})")
-            else:
-                print("Нет необработанных заявок.")
+            for req in requests:
+                student = repo.get_student(req.student_id)
+                type_request = repo.get_type_request(req.type_request_id)
+                print(f"{req.id}: {type_request.name} - {req.name} (Студент: {student.name} {student.surname}, Дата: {req.date})")
 
         elif choice == "3":
-            request_id = int(input("Введите ID заявки для обработки: "))
-            request = repo.get_request(request_id)
+            if not has_pending_requests:
+                print("❌ Нет необработанных заявок для обработки.")
+                continue
+                
+            # Показываем доступные заявки для обработки
+            print("\nДоступные заявки для обработки:")
+            for req in pending_requests:
+                student = repo.get_student(req.student_id)
+                print(f"ID {req.id}: {req.name} (Студент: {student.name} {student.surname})")
+            
+            try:
+                request_id = int(input("Введите ID заявки для обработки: "))
+            except ValueError:
+                print("❌ Ошибка: введите числовой ID заявки.")
+                continue
+                
+            # Проверяем что заявка существует и не обработана
+            request = None
+            for req in pending_requests:
+                if req.id == request_id:
+                    request = req
+                    break
+            
             if not request:
-                print("Заявка не найдена.")
+                print("❌ Заявка не найдена или уже обработана.")
                 continue
                 
             student = repo.get_student(request.student_id)
